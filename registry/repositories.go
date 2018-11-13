@@ -4,8 +4,15 @@ type repositoriesResponse struct {
 	Repositories []string `json:"repositories"`
 }
 
+func (registry *Registry) NamedRepositories(name string) ([]string, error) {
+	return repositories(registry.url("/v2/%s/_catalog", name), registry)
+}
+
 func (registry *Registry) Repositories() ([]string, error) {
-	url := registry.url("/v2/_catalog")
+	return repositories(registry.url("/v2/_catalog"), registry)
+}
+
+func repositories(url string, registry *Registry) ([]string, error) {
 	repos := make([]string, 0, 10)
 	var err error //We create this here, otherwise url will be rescoped with :=
 	var response repositoriesResponse
